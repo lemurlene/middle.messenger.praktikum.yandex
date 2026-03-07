@@ -1,0 +1,36 @@
+<section class="messenger">
+  <h1 class="visually-hidden">Чаты</h1>
+
+  <aside class="messenger__sidebar">
+    <a class="messenger__profile" href="/settings" data-link>Профиль →</a>
+
+    <div class="messenger__search">
+      <input class="messenger__search-input" type="search" placeholder="Поиск" />
+    </div>
+
+    <nav class="messenger__chat-nav" aria-label="Список чатов">
+      <ul class="messenger__chat-list">
+        {{#each chats}}
+          <li class="messenger__chat-item">
+            {{> chat-item}}
+          </li>
+        {{/each}}
+      </ul>
+    </nav>
+  </aside>
+
+  <div class="messenger__main">
+    <header class="messenger__header">
+      <div class="messenger__title">{{activeChatTitle}}</div>
+    </header>
+
+    <div class="messenger__feed">
+      <div class="messenger__stub">Здесь будет переписка</div>
+    </div>
+
+    <form class="messenger__composer" action="#" method="post">
+      <input class="messenger__message" type="text" name="message" placeholder="Сообщение" />
+      <button class="messenger__send" type="submit" aria-label="Отправить">→</button>
+    </form>
+  </div>
+</section>

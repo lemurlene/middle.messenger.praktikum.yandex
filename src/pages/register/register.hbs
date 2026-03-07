@@ -1,0 +1,20 @@
+<section class="auth">
+  <div class="auth-card auth-card--tall">
+    <h1 class="auth-card__title">Регистрация</h1>
+
+    <form class="auth-card__form" action="#" method="post">
+      {{> input label="Почта" name="email" type="email" value="" autocomplete="email"}}
+      {{> input label="Логин" name="login" type="text" value="" autocomplete="username"}}
+      {{> input label="Имя" name="first_name" type="text" value="" autocomplete="given-name"}}
+      {{> input label="Фамилия" name="second_name" type="text" value="" autocomplete="family-name"}}
+      {{> input label="Телефон" name="phone" type="tel" value="" autocomplete="tel"}}
+      {{> input label="Пароль" name="password" type="password" value="" autocomplete="new-password"}}
+
+      <div class="auth-card__actions">
+        {{> button type="submit" text="Зарегистрироваться" mods="button--primary"}}
+      </div>
+    </form>
+
+    <a class="auth-card__link" href="/" data-link>Войти</a>
+  </div>
+</section>

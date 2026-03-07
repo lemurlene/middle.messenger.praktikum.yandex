@@ -1,0 +1,16 @@
+<section class="auth">
+  <div class="auth-card">
+    <h1 class="auth-card__title">Вход</h1>
+
+    <form class="auth-card__form" action="#" method="post">
+      {{> input label="Логин" name="login" type="text" value="" placeholder="" autocomplete="username"}}
+      {{> input label="Пароль" name="password" type="password" value="" placeholder="" autocomplete="current-password"}}
+
+      <div class="auth-card__actions">
+        {{> button type="submit" text="Авторизоваться" mods="button--primary"}}
+      </div>
+    </form>
+
+    <a class="auth-card__link" href="/sign-up" data-link>Нет аккаунта?</a>
+  </div>
+</section>
