@@ -1,0 +1,29 @@
+<section class="profile">
+  <aside class="profile__side">
+    <a class="profile__back" href="/settings" data-link aria-label="Назад">←</a>
+  </aside>
+
+  <div class="profile__content">
+    <h1 class="auth-card__title">Изменить данные</h1>
+
+    <form class="auth-card__form" action="#" method="post" enctype="multipart/form-data">
+      {{> input label="Имя" name="first_name" type="text" value="" autocomplete="given-name"}}
+      {{> input label="Фамилия" name="second_name" type="text" value="" autocomplete="family-name"}}
+      {{> input label="Имя в чате" name="display_name" type="text" value="" autocomplete="nickname"}}
+      {{> input label="Логин" name="login" type="text" value="" autocomplete="username"}}
+      {{> input label="Почта" name="email" type="email" value="" autocomplete="email"}}
+      {{> input label="Телефон" name="phone" type="tel" value="" autocomplete="tel"}}
+
+      <div class="input">
+        <label class="input__label">
+          <span class="input__text">Аватар</span>
+          <input class="input__control" type="file" name="avatar" />
+        </label>
+      </div>
+
+      <div class="auth-card__actions">
+        {{> button type="submit" text="Сохранить" mods="button--primary"}}
+      </div>
+    </form>
+  </div>
+</section>

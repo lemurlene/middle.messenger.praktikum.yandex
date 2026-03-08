@@ -1,0 +1,26 @@
+{
+  "name": "messenger-yandex",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+  "start": "vite build && vite preview --port 3000 --strictPort",
+  "dev": "vite --port 3000 --strictPort",
+  "build": "vite build",
+  "preview": "vite preview --port 3000 --strictPort",
+  "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache"
+  },
+  "devDependencies": {
+    "@types/node": "^25.3.3",
+    "sass": "^1.97.3",
+    "typescript": "~5.9.3",
+    "vite": "^7.3.1"
+  },
+  "dependencies": {
+    "dotenv": "^17.3.1",
+    "handlebars": "^4.7.8"
+  },
+  "engines": {
+    "node": ">=22"
+  }
+}
