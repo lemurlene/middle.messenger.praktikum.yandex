@@ -1,0 +1,78 @@
+@use "../variables.scss" as *;
+
+.messenger {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  height: 100vh;
+}
+
+.messenger__sidebar {
+  border-right: 1px solid $color-line;
+  padding: 16px;
+  overflow: auto;
+}
+
+.messenger__profile {
+  display: inline-block;
+  margin-bottom: 12px;
+  color: $color-muted;
+  text-decoration: none;
+  font-size: 12px;
+}
+
+.messenger__search-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: $radius-s;
+  border: 1px solid $color-line;
+  margin-bottom: 12px;
+}
+
+.messenger__chat-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.messenger__main {
+  display: grid;
+  grid-template-rows: 56px 1fr 64px;
+}
+
+.messenger__header {
+  border-bottom: 1px solid $color-line;
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+}
+
+.messenger__feed {
+  padding: 16px;
+  overflow: auto;
+}
+
+.messenger__composer {
+  border-top: 1px solid $color-line;
+  display: grid;
+  grid-template-columns: 1fr 44px;
+  gap: 8px;
+  align-items: center;
+  padding: 12px 16px;
+}
+
+.messenger__message {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: $radius-pill;
+  border: 1px solid $color-line;
+}
+
+.messenger__send {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 0;
+  background: $color-primary;
+  color: $color-white;
+  cursor: pointer;
+}

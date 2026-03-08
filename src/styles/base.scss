@@ -1,11 +1,14 @@
+@use "./variables.scss" as *;
+
 * { box-sizing: border-box; }
 
 html, body { height: 100%; }
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #fff;
-  color: #1e1e1e;
+  background: $color-bg;
+  color: $color-text;
 }
 
 a { color: inherit; }

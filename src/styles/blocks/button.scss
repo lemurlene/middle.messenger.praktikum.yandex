@@ -1,0 +1,15 @@
+@use "../variables.scss" as *;
+
+.button {
+  width: 100%;
+  border: 0;
+  border-radius: $radius-s;
+  padding: 12px 14px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.button--primary {
+  background: $color-primary;
+  color: $color-white;
+}
