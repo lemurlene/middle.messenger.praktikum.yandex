@@ -1,0 +1,72 @@
+@use "../variables.scss" as *;
+
+.profile {
+  display: grid;
+  grid-template-columns: 64px 1fr;
+  min-height: 100vh;
+}
+
+.profile__side {
+  background: $color-bg-soft;
+  display: grid;
+  place-items: center;
+}
+
+.profile__back {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: $color-primary;
+  color: $color-white;
+  display: grid;
+  place-items: center;
+  text-decoration: none;
+}
+
+.profile__content {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 48px 16px;
+  text-align: center;
+}
+
+.profile__avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  background: $color-line;
+  margin: 0 auto 12px;
+}
+
+.profile__name { margin: 0 0 24px; font-size: 16px; }
+
+.profile__list {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 24px;
+  text-align: left;
+}
+
+.profile-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 0;
+  border-bottom: 1px solid $color-line-soft;
+  font-size: 13px;
+}
+
+.profile-row__value { color: $color-muted; }
+
+.profile__links {
+  display: grid;
+  gap: 10px;
+  text-align: left;
+}
+
+.profile__link {
+  color: $color-primary;
+  text-decoration: none;
+  font-size: 13px;
+}
+
+.profile__link--danger { color: $color-danger; }

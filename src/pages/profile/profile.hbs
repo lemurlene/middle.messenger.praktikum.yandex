@@ -1,0 +1,25 @@
+<section class="profile">
+  <aside class="profile__side">
+    <a class="profile__back" href="/messenger" data-link aria-label="Назад">←</a>
+  </aside>
+
+  <div class="profile__content">
+    <div class="profile__avatar" aria-hidden="true"></div>
+    <h1 class="profile__name">{{display_name}}</h1>
+
+    <ul class="profile__list">
+      {{#each rows}}
+        <li class="profile-row">
+          <span class="profile-row__key">{{key}}</span>
+          <span class="profile-row__value">{{value}}</span>
+        </li>
+      {{/each}}
+    </ul>
+
+    <nav class="profile__links" aria-label="Действия">
+      <a class="profile__link" href="/settings/edit" data-link>Изменить данные</a>
+      <a class="profile__link" href="/settings/password" data-link>Изменить пароль</a>
+      <a class="profile__link profile__link--danger" href="/" data-link>Выйти</a>
+    </nav>
+  </div>
+</section>

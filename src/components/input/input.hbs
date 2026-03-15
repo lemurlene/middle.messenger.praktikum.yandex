@@ -1,0 +1,16 @@
+<div class="input">
+  <label class="input__label">
+    <span class="input__text">{{label}}</span>
+    <input
+      class="input__control"
+      type="{{type}}"
+      name="{{name}}"
+      value="{{value}}"
+      placeholder="{{placeholder}}"
+      autocomplete="{{autocomplete}}"
+    />
+  </label>
+  {{#if error}}
+    <span class="input__error">{{error}}</span>
+  {{/if}}
+</div>
