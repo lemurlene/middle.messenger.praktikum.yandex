@@ -1,4 +1,4 @@
-[https://github.com/lemurlene/middle.messenger.praktikum.yandex/pull/4](https://github.com/lemurlene/middle.messenger.praktikum.yandex/pull/5/)
+https://github.com/lemurlene/middle.messenger.praktikum.yandex/pull/5
 
 ### Ветка, в которой делаете задания спринта, должна называться sprint_i, где i - номер спринта. Не переименовывайте её.
 ### Откройте pull request в ветку main из ветки, где вы разрабатывали проект, и добавьте ссылку на этот pr в README.md в ветке main. 
