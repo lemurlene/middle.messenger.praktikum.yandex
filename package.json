@@ -4,16 +4,22 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-  "start": "vite build && vite preview --port 3000 --strictPort",
-  "dev": "vite --port 3000 --strictPort",
-  "build": "vite build",
-  "preview": "vite preview --port 3000 --strictPort",
-  "lint": "eslint src --ext .js,.jsx,.ts,.tsx --cache"
+    "dev": "vite --port 3000 --strictPort",
+    "typecheck": "tsc --noEmit",
+    "start": "npm run typecheck && vite build && vite preview --port 3000 --strictPort",
+    "lint": "npm run typecheck && eslint . --ext .js,.jsx,.ts,.tsx --cache && stylelint \"src/**/*.{css,scss}\"",
+    "build": "vite build",
+    "preview": "vite preview --port 3000 --strictPort"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.3.3",
+    "eslint": "^10.0.2",
     "sass": "^1.97.3",
+    "stylelint": "^16.23.1",
+    "stylelint-config-standard-scss": "^14.0.0",
     "typescript": "~5.9.3",
+    "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"
   },
   "dependencies": {
