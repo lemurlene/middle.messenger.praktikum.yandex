@@ -1,106 +1,92 @@
 import { EventBus } from "./EventBus";
 
 export type Props = Record<string, unknown>;
-export type Children = Record<string, Block | Block[]>;
 
-type Meta = { tagName: string };
-type Listener = (...args: unknown[]) => void;
+export type EventsMap = Partial<Record<keyof HTMLElementEventMap, (e: Event) => void>>;
 
-export abstract class Block<P extends Props = Props> {
+export type BlockProps = Props & {
+  events?: EventsMap;
+};
+
+export abstract class Block<P extends BlockProps = BlockProps> {
   private static EVENTS = {
     INIT: "init",
     FLOW_CDM: "flow:component-did-mount",
-    FLOW_CDU: "flow:component-did-update",
     FLOW_RENDER: "flow:render",
   } as const;
 
   public readonly id: string;
 
   protected props: P;
-  protected children: Children;
+  protected children: Record<string, Block | Block[]> = {};
 
-  private readonly eventBus: EventBus;
-  private readonly meta: Meta;
+  private eventBus: EventBus;
   private element: HTMLElement | null = null;
+  private tagName: string;
 
-  constructor(
-    propsAndChildren: (P & Record<string, unknown>) = {} as P & Record<string, unknown>,
-    tagName = "div"
-  ) {
-    this.id = Block.makeId();
-    this.meta = { tagName };
+  constructor(props: P = {} as P, tagName = "div") {
+    this.id = `b_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+    this.tagName = tagName;
+
     this.eventBus = new EventBus();
-
-    const { props, children } = this.separateChildren(propsAndChildren);
-    this.children = children;
     this.props = this.makePropsProxy(props);
 
-    this.registerLifecycleEvents(this.eventBus);
+    this.registerEvents(this.eventBus);
     this.eventBus.emit(Block.EVENTS.INIT);
   }
 
+  protected init(): void {}
+  protected componentDidMount(): void {}
+  protected componentDidUpdate(_oldProps: P, _newProps: P): boolean {
+    return true;
+  }
+  protected abstract render(): DocumentFragment;
+
   public getContent(): HTMLElement {
-    if (!this.element) throw new Error("Block: element is not created yet");
+    if (!this.element) throw new Error("Block: element is not created");
     return this.element;
   }
 
-  public setProps(nextProps: Partial<P>): void {
-    if (!nextProps) return;
-
+  public setProps(next: Partial<P>): void {
+    if (!next) return;
     const oldProps = { ...this.props };
-    Object.assign(this.props, nextProps);
 
-    this.eventBus.emit(Block.EVENTS.FLOW_CDU, oldProps, this.props);
+    Object.assign(this.props, next);
+
+    const shouldRender = this.componentDidUpdate(oldProps as P, this.props);
+    if (shouldRender) {
+      this.eventBus.emit(Block.EVENTS.FLOW_RENDER);
+    }
   }
 
   public dispatchComponentDidMount(): void {
     this.eventBus.emit(Block.EVENTS.FLOW_CDM);
   }
 
-  protected init(): void {}
-  protected componentDidMount(): void {}
-
-  protected componentDidUpdate(_oldProps: P, _newProps: P): boolean {
-    return true;
-  }
-
-  protected abstract render(): DocumentFragment;
-
-  protected addEvents(): void {}
-  protected removeEvents(): void {}
-
-  private registerLifecycleEvents(eventBus: EventBus): void {
-    eventBus.on(Block.EVENTS.INIT, this.onInit.bind(this) as Listener);
-    eventBus.on(Block.EVENTS.FLOW_CDM, this.onComponentDidMount.bind(this) as Listener);
-    eventBus.on(Block.EVENTS.FLOW_CDU, this.onComponentDidUpdate.bind(this) as Listener);
-    eventBus.on(Block.EVENTS.FLOW_RENDER, this.onRender.bind(this) as Listener);
+  private registerEvents(bus: EventBus): void {
+    bus.on(Block.EVENTS.INIT, this.onInit.bind(this));
+    bus.on(Block.EVENTS.FLOW_RENDER, this.onRender.bind(this));
+    bus.on(Block.EVENTS.FLOW_CDM, this.onCDM.bind(this));
   }
 
   private onInit(): void {
-    this.element = document.createElement(this.meta.tagName);
-    this.element.setAttribute("data-id", this.id);
+    this.element = document.createElement(this.tagName);
     this.init();
     this.eventBus.emit(Block.EVENTS.FLOW_RENDER);
   }
 
-  private onComponentDidMount(): void {
+  private onCDM(): void {
     this.componentDidMount();
-
     Object.values(this.children).forEach((child) => {
       if (Array.isArray(child)) child.forEach((c) => c.dispatchComponentDidMount());
       else child.dispatchComponentDidMount();
     });
   }
 
-  private onComponentDidUpdate(oldProps: P, newProps: P): void {
-    const shouldRender = this.componentDidUpdate(oldProps, newProps);
-    if (shouldRender) this.eventBus.emit(Block.EVENTS.FLOW_RENDER);
-  }
-
   private onRender(): void {
     if (!this.element) throw new Error("Block: element is not created");
 
-    this.removeEvents();
+    this._removeEvents();
 
     const fragment = this.render();
 
@@ -109,65 +95,50 @@ export abstract class Block<P extends Props = Props> {
 
     this.mountChildren();
 
-    this.addEvents();
+    this._addEvents();
+  }
+
+  private _addEvents(): void {
+    const events = this.props.events;
+    if (!events || !this.element) return;
+
+    Object.entries(events).forEach(([eventName, handler]) => {
+      if (!handler) return;
+      this.element!.addEventListener(eventName, handler);
+    });
+  }
+
+  private _removeEvents(): void {
+    const events = this.props.events;
+    if (!events || !this.element) return;
+
+    Object.entries(events).forEach(([eventName, handler]) => {
+      if (!handler) return;
+      this.element!.removeEventListener(eventName, handler);
+    });
   }
 
   private mountChildren(): void {
-    const root = this.getContent();
+    const root = this.element;
+    if (!root) return;
 
     Object.entries(this.children).forEach(([key, child]) => {
       const slot = root.querySelector<HTMLElement>(`[data-slot="${key}"]`);
       if (!slot) return;
 
-      slot.replaceChildren();
+      slot.innerHTML = "";
 
-      if (Array.isArray(child)) {
-        child.forEach((c) => slot.append(c.getContent()));
-      } else {
-        slot.append(child.getContent());
-      }
+      if (Array.isArray(child)) child.forEach((c) => slot.append(c.getContent()));
+      else slot.append(child.getContent());
     });
   }
 
-  private separateChildren(
-    propsAndChildren: P & Record<string, unknown>
-  ): { props: P; children: Children } {
-    const props: Record<string, unknown> = {};
-    const children: Children = {};
-
-    Object.entries(propsAndChildren).forEach(([key, value]) => {
-      if (value instanceof Block) {
-        children[key] = value;
-        return;
-      }
-
-      if (Array.isArray(value) && value.every((v) => v instanceof Block)) {
-        children[key] = value as Block[];
-        return;
-      }
-
-      props[key] = value;
-    });
-
-    return { props: props as P, children };
-  }
-
-  private makePropsProxy(initialProps: P): P {
-    return new Proxy(initialProps, {
-      get(target, prop: string) {
-        return target[prop as keyof P];
-      },
-      set(target, prop: string, value: unknown) {
+  private makePropsProxy(props: P): P {
+    return new Proxy(props, {
+      set: (target, prop: string, value) => {
         target[prop as keyof P] = value as P[keyof P];
         return true;
       },
-      deleteProperty() {
-        throw new Error("Block: no access");
-      },
     });
-  }
-
-  private static makeId(): string {
-    return `b_${Date.now()}_${Math.random().toString(16).slice(2)}`;
   }
 }

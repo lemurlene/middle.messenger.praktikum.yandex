@@ -24,37 +24,66 @@ export type FormProps = {
 };
 
 export class Form extends Block<FormProps> {
-  protected addEvents(): void {
-    const root = this.getContent();
-    const form = root.querySelector("form") as HTMLFormElement | null;
+  constructor(props: FormProps) {
+    let self!: Form;
+
+    const handleFocusOut = (e: Event) => self.onFocusOut(e);
+    const handleSubmit = (e: Event) => self.onSubmitEvent(e);
+
+    super(
+      {
+        ...props,
+        events: {
+          focusout: handleFocusOut,
+          submit: handleSubmit,
+        },
+      } as unknown as FormProps
+    );
+
+    self = this;
+  }
+
+  private onFocusOut(e: Event): void {
+    const el = e.target;
+
+    if (!(el instanceof HTMLInputElement) && !(el instanceof HTMLTextAreaElement)) {
+      return;
+    }
+
+    const name = el.name as FieldName;
+    if (!name) return;
+
+    this.applyFieldValidation(el, name);
+  }
+
+  private onSubmitEvent(e: Event): void {
+    const target = e.target;
+    const form =
+      target instanceof HTMLFormElement
+        ? target
+        : target instanceof HTMLElement
+          ? target.closest("form")
+          : null;
+
     if (!form) return;
 
-    form.addEventListener("focusout", (e) => {
-      const el = e.target as HTMLInputElement | HTMLTextAreaElement | null;
-      if (!el) return;
+    e.preventDefault();
 
-      const name = el.name as FieldName;
-      if (!name) return;
+    const values = getFormValues(form);
 
-      this.applyFieldValidation(el, name);
+    const inputs = Array.from(
+      form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input[name], textarea[name]")
+    );
+
+    const allOk = inputs.every((control) => {
+      const name = control.name as FieldName;
+      return this.applyFieldValidation(control, name);
     });
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+    if (!allOk) return;
 
-      const values = getFormValues(form);
-
-      const inputs = Array.from(form.querySelectorAll<HTMLInputElement | HTMLTextAreaElement>("input[name], textarea[name]"));
-      const allOk = inputs.every((el) => {
-        const name = el.name as FieldName;
-        return this.applyFieldValidation(el, name);
-      });
-
-      if (!allOk) return;
-
-      console.log(values);
-      this.props.onSubmit?.(values);
-    });
+    console.log(values);
+    this.props.onSubmit?.(values);
   }
 
   private applyFieldValidation(

@@ -2,6 +2,7 @@ import Handlebars from "handlebars";
 import { Block } from "../../core/Block";
 import { compile } from "../../core/compile";
 import tpl from "./chats.hbs?raw";
+
 import chatItemTpl from "../../components/chat-item/chat-item.hbs?raw";
 import { Form } from "../../components/form";
 import { ChatMessage } from "../../components/chat-message";
@@ -9,7 +10,6 @@ import { chats } from "../../mocks/chats";
 import { chatsController } from "../../controllers";
 
 type ChatsPageProps = { selectedChatId: number };
-
 type Message = { text: string; time: string; timeIso: string; isMine?: boolean };
 
 const messagesByChat: Record<number, Message[]> = {
@@ -46,7 +46,17 @@ export class ChatsPage extends Block<ChatsPageProps> {
       Handlebars.registerPartial("chat-item", chatItemTpl);
     }
 
-    super({ selectedChatId: chats[0]?.id ?? 1 });
+    let self!: ChatsPage;
+    const handleClick = (e: Event) => self.onClick(e);
+
+    super({
+      selectedChatId: chats[0]?.id ?? 1,
+      events: {
+        click: handleClick,
+      },
+    } as unknown as ChatsPageProps);
+
+    self = this;
   }
 
   protected init(): void {
@@ -67,25 +77,26 @@ export class ChatsPage extends Block<ChatsPageProps> {
       submitText: "Отправить",
       onSubmit: (values) => {
         chatsController.sendMessage(values);
+
         this.children.messages = this.buildMessages(this.props.selectedChatId);
         this.setProps({ selectedChatId: this.props.selectedChatId });
       },
     });
   }
 
-  protected addEvents(): void {
-    this.getContent().addEventListener("click", (e) => {
-      const target = e.target as HTMLElement;
-      const item = target.closest("[data-chat-id]");
-      if (!item) return;
+  private onClick(e: Event): void {
+    const target = e.target;
+    if (!(target instanceof HTMLElement)) return;
 
-      const id = Number(item.getAttribute("data-chat-id"));
-      if (!id || id === this.props.selectedChatId) return;
+    const item = target.closest("[data-chat-id]");
+    if (!item) return;
 
-      this.children.chatList = this.buildChatList(id);
-      this.children.messages = this.buildMessages(id);
-      this.setProps({ selectedChatId: id });
-    });
+    const id = Number(item.getAttribute("data-chat-id"));
+    if (!id || id === this.props.selectedChatId) return;
+
+    this.children.chatList = this.buildChatList(id);
+    this.children.messages = this.buildMessages(id);
+    this.setProps({ selectedChatId: id });
   }
 
   private buildChatList(selectedId: number): Block[] {
