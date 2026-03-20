@@ -1,0 +1,11 @@
+<form class="form {{className}}" novalidate>
+  <div class="form__fields">
+    {{#each fields}}
+      {{> input}}
+    {{/each}}
+  </div>
+
+  <div class="form__actions">
+    {{> button button}}
+  </div>
+</form>
