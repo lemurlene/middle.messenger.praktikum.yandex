@@ -2,15 +2,11 @@
   <div class="auth-card">
     <h1 class="auth-card__title">Вход</h1>
 
-    <form class="auth-card__form" action="#" method="post">
-      {{> input label="Логин" name="login" type="text" value="" placeholder="" autocomplete="username"}}
-      {{> input label="Пароль" name="password" type="password" value="" placeholder="" autocomplete="current-password"}}
+    <div data-slot="form"></div>
 
-      <div class="auth-card__actions">
-        {{> button type="submit" text="Авторизоваться" mods="button--primary"}}
-      </div>
-    </form>
-
-    <a class="auth-card__link" href="/sign-up" data-link>Нет аккаунта?</a>
+    <p class="auth-card__hint">
+      Нет аккаунта?
+      <a class="link" href="/register" data-link>Зарегистрироваться</a>
+    </p>
   </div>
 </section>
